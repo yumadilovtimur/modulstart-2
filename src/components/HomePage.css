@@ -1,0 +1,29 @@
+.city-nav {
+padding-top: 50px;
+}
+
+.city-nav__box {
+  width: 25%;
+  padding: 35px 25px;
+  border-radius: 0 20px 20px 0;
+  background-color: rgba(255,229,100,0.4);
+  border-left-color: #ffe564;
+  border-left-width: 9px;
+  border-left-style: solid;
+}
+
+.city-nav__list {
+
+}
+
+.city-nav__list-item {
+  margin-bottom: 8px;
+
+}
+
+.city-nav__link {
+  text-decoration: none;
+  background-color: rgba(187,239,253,0.3);
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+  color: #1a1a1a;
+}

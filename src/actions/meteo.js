@@ -2,12 +2,9 @@ export const METEO_REQUEST = 'METEO_REQUEST';
 export const METEO_SUCCESS = 'METEO_SUCCESS';
 export const METEO_ERROR = 'METEO_ERROR';
 
-export const meteoRequest = (xmlUrl, canvasCtx) => ({
+export const meteoRequest = payload => ({
   type: METEO_REQUEST,
-  payload: {
-    xmlUrl,
-    canvasCtx
-  }
+  payload
 });
 
 export const meteoSuccess = payload => ({

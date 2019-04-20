@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Header from './components/Header';
-import Footer from './components/Footer';
 import HomePage from './components/HomePage';
 import Page from './components/Page';
 import availableCities from './cities.js';
@@ -12,7 +11,7 @@ class App extends PureComponent {
   render() {
     const { meteoRequest } = this.props;
 
-    const { isFetching, isFetched, error, temperature } = this.props.meteo;
+    const { isFetching, error, temperature } = this.props.meteo;
 
     return (
       <BrowserRouter>
@@ -31,13 +30,13 @@ class App extends PureComponent {
                     meteoRequest={meteoRequest}
                     isFetching={isFetching}
                     temperature={temperature}
+                    error={error}
                   />
                 )}
               />
             ))}
             <Redirect to="/" />
           </Switch>
-          <Footer />
         </div>
       </BrowserRouter>
     );

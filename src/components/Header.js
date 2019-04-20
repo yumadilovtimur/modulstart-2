@@ -1,16 +1,15 @@
 import React, { PureComponent } from 'react';
 import { NavLink } from 'react-router-dom';
+import './Header.css';
 
 class Header extends PureComponent {
   render() {
     return (
-      <div>
-        <header>
-          <nav>
-            <NavLink to="/">
-              <span>Logotype</span>
-            </NavLink>
-          </nav>
+      <div className="container container--header">
+        <header className="header">
+          <NavLink to="/" className="header__logo">
+            WeatherLogo
+          </NavLink>
         </header>
       </div>
     );

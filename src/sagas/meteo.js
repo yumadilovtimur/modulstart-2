@@ -1,4 +1,4 @@
-import { put, call, take } from 'redux-saga/effects';
+import { put, call, take, delay } from 'redux-saga/effects';
 import { meteoSuccess, meteoError, METEO_REQUEST } from '../actions/meteo';
 import Chart from 'chart.js';
 
@@ -25,50 +25,38 @@ const getXml = url => {
 const loadTemperature = meteoXml => {
   const real = meteoXml.querySelectorAll('TEMPERATURE');
   const perceived = meteoXml.querySelectorAll('HEAT');
+  const phenomena = meteoXml.querySelectorAll('PHENOMENA');
 
-  const result = {
-    realTemperature: {},
-    perceivedTemperature: {}
-  };
+  const result = {};
 
-  const addData = (nodes, data) => {
+  const addData = (nodes, data, attr) => {
     [...nodes].forEach(item => {
-      const temp = item.getAttribute('max');
+      const value = item.getAttribute(attr);
       const hour = `${item.parentNode.getAttribute('hour')}:00`;
-      data[hour] = temp;
+      result[hour] = {
+        ...result[hour],
+        [data]: value
+      };
     });
   };
 
-  addData(real, result.realTemperature);
-  addData(perceived, result.perceivedTemperature);
+  addData(real, 'realTemperature', 'max');
+  addData(perceived, 'perceivedTemperature', 'max');
+  addData(phenomena, 'cloudiness', 'cloudiness');
 
   return result;
 };
 
-const buildChart = (tempData, canvasCtx) => {
-  const timeKeys = Object.keys(tempData.realTemperature);
-  const realTemp = timeKeys.map(key => tempData.realTemperature[key]);
-  const perceivedTemp = timeKeys.map(key => tempData.perceivedTemperature[key]);
+const buildChart = tempData => {
+  const timeKeys = Object.keys(tempData);
+  const realTemp = timeKeys.map(key => tempData[key].realTemperature);
+  const perceivedTemp = timeKeys.map(key => tempData[key].perceivedTemperature);
 
   const chartConfig = {
     type: 'line',
     data: {
       labels: timeKeys,
       datasets: [
-        {
-          label: 'Температура',
-          backgroundColor: 'rgb(173, 243, 19)',
-          borderColor: 'rgb(62, 90, 0)',
-          pointBackgroundColor: 'rgb(241, 253, 215)',
-          data: realTemp,
-          borderJoinStyle: 'round',
-          borderWidth: 2,
-          pointHoverBorderWidth: 4,
-          lineTension: 0.4,
-          pointRadius: 6,
-          pointHoverRadius: 7,
-          pointStyle: 'rectRounded'
-        },
         {
           label: 'Температура по ощущениям',
           backgroundColor: 'rgb(14, 176, 176)',
@@ -83,12 +71,26 @@ const buildChart = (tempData, canvasCtx) => {
           pointRadius: 6,
           pointHoverRadius: 7,
           pointStyle: 'rectRounded'
+        },
+        {
+          label: 'Температура',
+          backgroundColor: 'rgb(173, 243, 19)',
+          borderColor: 'rgb(62, 90, 0)',
+          pointBackgroundColor: 'rgb(241, 253, 215)',
+          data: realTemp,
+          borderJoinStyle: 'round',
+          borderWidth: 2,
+          pointHoverBorderWidth: 4,
+          lineTension: 0.4,
+          pointRadius: 6,
+          pointHoverRadius: 7,
+          pointStyle: 'rectRounded'
         }
       ]
     },
     options: {
       legend: {
-        position: 'right',
+        position: 'top',
         labels: {
           fontSize: 14,
           fontColor: 'black',
@@ -130,19 +132,20 @@ const buildChart = (tempData, canvasCtx) => {
     }
   };
 
-  new Chart(canvasCtx, chartConfig);
+  const canvasNode = document.querySelector('#out');
+  new Chart(canvasNode, chartConfig);
 };
 
 export default function* meteoFlow() {
-  try {
-    const {
-      payload: { xmlUrl, canvasCtx }
-    } = yield take(METEO_REQUEST);
-    const xml = yield call(getXml, xmlUrl);
-    const temp = yield call(loadTemperature, xml.response);
-    yield call(buildChart, temp, canvasCtx);
-    yield put(meteoSuccess(temp));
-  } catch (error) {
-    yield put(meteoError(error));
-  }
+  while (true)
+    try {
+      const { payload } = yield take(METEO_REQUEST);
+      yield delay(1500);
+      const xml = yield call(getXml, payload);
+      const temp = yield call(loadTemperature, xml.response);
+      yield put(meteoSuccess(temp));
+      yield call(buildChart, temp);
+    } catch (error) {
+      yield put(meteoError(error));
+    }
 }

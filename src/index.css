@@ -1,0 +1,70 @@
+body,
+html {
+  height: 100%;
+  font-family: Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+body {
+  font-family: Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #000000;
+  margin: 0;
+}
+
+ul,
+li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+}
+
+svg {
+  overflow: visible;
+  display: block;
+}
+
+*::selection {
+  background-color: #4481ec;
+  color: #ffffff;
+}
+
+.wrapper {
+  margin: 0 auto;
+  overflow: hidden;
+  width: 100%;
+}
+
+.container {
+  margin: 0 auto;
+  max-width: 1740px;
+  height: 100%;
+  padding: 0 1.7%;
+  position: relative;
+}
+
+.container--header {
+  background-color: #20232a;
+}
+
+.title {
+  color: #20232a;
+  margin-bottom: 20px;
+}
